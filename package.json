@@ -1,6 +1,6 @@
 {
-  "name": "vue-native-core",
-  "version": "0.1.4",
+  "name": "@minar-kotonoha/vue-native-core",
+  "version": "0.2.0",
   "description": "Create mobile apps using vuejs",
   "main": "dist/vue.runtime.esm.js",
   "module": "dist/vue.runtime.esm.js",
@@ -8,7 +8,7 @@
   "typings": "types/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/GeekyAnts/vue-native-core.git"
+    "url": "https://github.com/chengzhuo5/vue-native-core.git"
   },
   "keywords": [
     "vue",
@@ -19,10 +19,10 @@
     "node": "^4.5 || >=5.10"
   },
   "engineStrict": true,
-  "author": "Geekyants (https://geekyants.io/)",
+  "author": "chengzhuo5",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/GeekyAnts/vue-native-core/issues"
+    "url": "https://github.com/chengzhuo5/vue-native-core/issues"
   },
   "files": [
     "src",
@@ -45,7 +45,7 @@
     "run-vue": "cross-env NODE_ENV=development webpack-dev-server --open --hot",
     "postinstall": "opencollective-postinstall"
   },
-  "homepage": "https://github.com/GeekyAnts/vue-native-core",
+  "homepage": "https://github.com/chengzhuo5/vue-native-core",
   "devDependencies": {
     "babel-core": "^6.9.0",
     "babel-eslint": "^7.1.0",

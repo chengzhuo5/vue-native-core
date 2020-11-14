@@ -33,7 +33,7 @@ export function compileVueToRn(resource) {
   // add react-vue import
   output += `import ${constants.VUE}, { observer as ${
     constants.OBSERVER
-    } } from 'vue-native-core'`;
+    } } from '@minar-kotonoha/vue-native-core'`;
   output += '\n';
 
   // // add react import

@@ -260,7 +260,7 @@ function compileVueToRn(resource) {
   var mappings = '';
 
   // add react-vue import
-  output += "import " + (constants.VUE) + ", { observer as " + (constants.OBSERVER) + " } from 'vue-native-core'";
+  output += "import " + (constants.VUE) + ", { observer as " + (constants.OBSERVER) + " } from '@minar-kotonoha/vue-native-core'";
   output += '\n';
 
   // // add react import

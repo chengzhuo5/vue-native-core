@@ -3,7 +3,6 @@
  */
 
 import React from 'react'
-import Watcher from 'core/observer/watcher'
 
 export default function observer (componentClass) {
   if (typeof componentClass === 'function' &&
@@ -44,7 +43,7 @@ const lifecycleMixin = {
   componentWillUnmount () {
     this.$vuewatcher.teardown()
   },
-  shouldComponentUpdate (nextProps, nextState) {
+  shouldComponentUpdate(nextProps, nextState) {
     if (this.state !== nextState) {
       return true
     }
@@ -52,7 +51,7 @@ const lifecycleMixin = {
   }
 }
 
-function patch (target, funcName) {
+function patch(target, funcName) {
   const base = target[funcName]
   const mixinFunc = lifecycleMixin[funcName]
   target[funcName] = !base ? function () {
