@@ -41,15 +41,6 @@ function mixinLifecycleEvents (target) {
 }
 
 const lifecycleMixin = {
-  UNSAFE_componentWillMount () {
-    const cb = this.forceUpdate.bind(this)
-    const render = this.render.bind(this)
-    const watcher = new Watcher({ _watchers: [] }, render, cb, { lazy: true })
-    this.render = watcher.get.bind(watcher)
-    watcher.lazy = false
-    watcher.run = cb
-    this.$vuewatcher = watcher
-  },
   componentWillUnmount () {
     this.$vuewatcher.teardown()
   },

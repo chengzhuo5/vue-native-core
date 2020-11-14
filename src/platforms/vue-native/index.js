@@ -1,8 +1,5 @@
 /** @flow */
 
-import Vue from './runtime/index'
-import observer from './observer'
+import constructor from './constructor'
 
-Vue.observer = observer
-
-export default Vue
+export default constructor
