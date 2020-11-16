@@ -13,21 +13,10 @@ export default (options) => {
   }
   class VueComponent extends Component {
     constructor(props) {
-      // this._execLifeCycle('beforeCreate');
       super(props);
       this._store = new Vue(options);
       this._store.props = props;
       this._store._rawComponent = this;
-      const cb = this.forceUpdate.bind(this);
-      const render = this.render.bind(this);
-      const watcher = new Watcher({ _watchers: [] }, render, cb, {
-        lazy: true,
-      });
-      this.render = watcher.get.bind(watcher);
-      watcher.lazy = false;
-      watcher.run = cb;
-      this.$vuewatcher = watcher;
-      // this._execLifeCycle('created');
       this._execLifeCycle('beforeMount');
     }
 

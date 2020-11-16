@@ -3923,90 +3923,124 @@ renderMixin(Vue);
  * Reference to mobx https://github.com/mobxjs/mobx-react-vue/blob/master/src/observer.js
  */
 
-function observer (componentClass) {
-  if (typeof componentClass === 'function' &&
-    (!componentClass.prototype || !componentClass.prototype.render) && !componentClass.isReactClass && !React__default.Component.isPrototypeOf(componentClass)
+function observer(componentClass) {
+  if (
+    typeof componentClass === 'function' &&
+    (!componentClass.prototype || !componentClass.prototype.render) &&
+    !componentClass.isReactClass &&
+    !React__default.Component.isPrototypeOf(componentClass)
   ) {
-    var ObserverComponent = /*@__PURE__*/(function (superclass) {
-      function ObserverComponent () {
+    var Function2Component = /*@__PURE__*/(function (superclass) {
+      function Function2Component () {
         superclass.apply(this, arguments);
       }
 
-      if ( superclass ) ObserverComponent.__proto__ = superclass;
-      ObserverComponent.prototype = Object.create( superclass && superclass.prototype );
-      ObserverComponent.prototype.constructor = ObserverComponent;
+      if ( superclass ) Function2Component.__proto__ = superclass;
+      Function2Component.prototype = Object.create( superclass && superclass.prototype );
+      Function2Component.prototype.constructor = Function2Component;
 
-      ObserverComponent.prototype.render = function render () {
-        return componentClass.call(this, this.props, this.context)
+      Function2Component.prototype.render = function render () {
+        return componentClass.call(this, this.props, this.context);
       };
 
-      return ObserverComponent;
+      return Function2Component;
     }(React__default.Component));
-    ObserverComponent.displayName = componentClass.displayName || componentClass.name;
-    ObserverComponent.contextTypes = componentClass.contextTypes;
-    ObserverComponent.propTypes = componentClass.propTypes;
-    ObserverComponent.defaultProps = componentClass.defaultProps;
-    return observer(ObserverComponent)
+    Function2Component.displayName =
+      componentClass.displayName || componentClass.name;
+    Function2Component.contextTypes = componentClass.contextTypes;
+    Function2Component.propTypes = componentClass.propTypes;
+    Function2Component.defaultProps = componentClass.defaultProps;
+    return observer(Function2Component);
   }
 
   if (!componentClass) {
-    throw new Error("Please pass a valid component to 'observer'")
+    throw new Error("Please pass a valid component to 'observer'");
   }
 
   var target = componentClass.prototype || componentClass;
   mixinLifecycleEvents(target);
-  return componentClass
+  var ObserverClass = /*@__PURE__*/(function (componentClass) {
+    function ObserverClass(props) {
+      componentClass.call(this, props);
+      var cb = this.forceUpdate.bind(this);
+      var render = this.render.bind(this);
+      var watcher = new Watcher({ _watchers: [] }, render, cb, {
+        lazy: true,
+      });
+      this.render = watcher.get.bind(watcher);
+      watcher.lazy = false;
+      watcher.run = cb;
+      this.$vuewatcher = watcher;
+    }
+
+    if ( componentClass ) ObserverClass.__proto__ = componentClass;
+    ObserverClass.prototype = Object.create( componentClass && componentClass.prototype );
+    ObserverClass.prototype.constructor = ObserverClass;
+
+    return ObserverClass;
+  }(componentClass));
+  
+  return ObserverClass;
 }
 
-function mixinLifecycleEvents (target) {
+function mixinLifecycleEvents(target) {
   for (var key in lifecycleMixin) {
-    if (key === 'shouldComponentUpdate' &&
-      typeof target.shouldComponentUpdate === 'function') {
-      continue
+    if (
+      key === 'shouldComponentUpdate' &&
+      typeof target.shouldComponentUpdate === 'function'
+    ) {
+      continue;
     }
     patch(target, key);
   }
 }
 
 var lifecycleMixin = {
-  componentWillUnmount: function componentWillUnmount () {
+  componentWillUnmount: function componentWillUnmount() {
     this.$vuewatcher.teardown();
   },
   shouldComponentUpdate: function shouldComponentUpdate(nextProps, nextState) {
     if (this.state !== nextState) {
-      return true
+      return true;
     }
-    return isObjectShallowModified(this.props, nextProps)
-  }
+    return isObjectShallowModified(this.props, nextProps);
+  },
 };
 
 function patch(target, funcName) {
   var base = target[funcName];
   var mixinFunc = lifecycleMixin[funcName];
-  target[funcName] = !base ? function () {
-    return mixinFunc.apply(this, arguments)
-  } : function () {
-    mixinFunc.apply(this, arguments);
-    return base.apply(this, arguments)
-  };
+  target[funcName] = !base
+    ? function () {
+        return mixinFunc.apply(this, arguments);
+      }
+    : function () {
+        mixinFunc.apply(this, arguments);
+        return base.apply(this, arguments);
+      };
 }
 
-function isObjectShallowModified (prev, next) {
-  if (prev == null || next == null || typeof prev !== 'object' || typeof next !== 'object') {
-    return prev !== next
+function isObjectShallowModified(prev, next) {
+  if (
+    prev == null ||
+    next == null ||
+    typeof prev !== 'object' ||
+    typeof next !== 'object'
+  ) {
+    return prev !== next;
   }
   var keys = Object.keys(prev);
   if (keys.length !== Object.keys(next).length) {
-    return true
+    return true;
   }
   var key;
   for (var i = keys.length - 1; i >= 0; i--) {
     key = keys[i];
     if (next[key] !== prev[key]) {
-      return true
+      return true;
     }
   }
-  return false
+  return false;
 }
 
 function constructor (options) {
@@ -4018,21 +4052,10 @@ function constructor (options) {
   }
   var VueComponent = /*@__PURE__*/(function (Component) {
     function VueComponent(props) {
-      // this._execLifeCycle('beforeCreate');
       Component.call(this, props);
       this._store = new Vue(options);
       this._store.props = props;
       this._store._rawComponent = this;
-      var cb = this.forceUpdate.bind(this);
-      var render = this.render.bind(this);
-      var watcher = new Watcher({ _watchers: [] }, render, cb, {
-        lazy: true,
-      });
-      this.render = watcher.get.bind(watcher);
-      watcher.lazy = false;
-      watcher.run = cb;
-      this.$vuewatcher = watcher;
-      // this._execLifeCycle('created');
       this._execLifeCycle('beforeMount');
     }
 
