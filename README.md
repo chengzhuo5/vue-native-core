@@ -27,10 +27,10 @@ export default constructor({
     },
   },
   mounted() {
-    // 三种ref使用方式均可
-    ref1.add();
-    // ref1.current.add()
-    // ref1.current._store.add()
+    // Vue组件和Vue-React组件以下三种ref使用方式均可，纯React组件只能用第三种。
+    childRef.add();
+    // childRef.current.add()
+    // childRef.current._store.add()
   },
   render() {
     return (
