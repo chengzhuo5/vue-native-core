@@ -1,4 +1,4 @@
-# Vue Native
+# @minar-kotonoha/vue-native-core
 
 原 git：https://github.com/GeekyAnts/vue-native-core，本项目基于此进行了二次开发。
 
@@ -11,9 +11,10 @@
 ```javascript
 // Parent.js
 import React from 'react';
-import { constructor } from '@minar-kotonoha/vue-native-core';
+import { constructor, ref } from '@minar-kotonoha/vue-native-core';
 import Child from './Child';
 
+const childRef = ref();
 export default constructor({
   data() {
     return {
@@ -25,11 +26,17 @@ export default constructor({
       this.showChild = !this.showChild;
     },
   },
+  mounted() {
+    // 三种ref使用方式均可
+    ref1.add();
+    // ref1.current.add()
+    // ref1.current._store.add()
+  },
   render() {
     return (
       <div>
         <button onClick={this.trigger}>{this.showChild.toString()}</button>
-        {this.showChild && <SubVue count={1} />}
+        {this.showChild && <SubVue ref={childRef} count={1} />}
       </div>
     );
   },
@@ -86,3 +93,7 @@ export default constructor({
 ```
 
 注：由于只是把 Vue 的响应式机制和生命周期移植，最终导出的依然是 React 组件，故并不影响 React 兼容性，Vue 原生组件不能通过 constructor 的方式使用，可以采用原 git 项目中 loader 的方式。
+
+## 模板指令
+
+为了减少包大小以及考虑到很多用户不喜欢模板指令，本项目默认不包含指令功能，如有需要可以移步[@minar-kotonoha/babel-plugin-react-directives](https://github.com/chengzhuo5/babel-plugin-react-directives)

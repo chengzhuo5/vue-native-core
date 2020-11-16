@@ -3861,7 +3861,7 @@ Object.defineProperty(Vue.prototype, '$isServer', {
   get: isServerRendering
 });
 
-Vue.version = '0.2.0';
+Vue.version = '0.2.2';
 
 // 
 
@@ -4109,9 +4109,30 @@ function constructor (options) {
   return observer(VueComponent);
 }
 
+function ref () {
+  var ref = React.createRef();
+  return new Proxy(ref, {
+    get: function get(target, key) {
+      if (key === 'current' && target.current) {
+        var currentProxy = new Proxy(target.current, {
+          get: function get(current, currentKey) {
+            return current[currentKey] || current._store[currentKey]
+          },
+        });
+        return currentProxy
+      }
+      if (!target[key] && target.current) {
+        return target.current[key] || target.current._store[key]
+      }
+      return target[key]
+    },
+  })
+}
+
 /**  */
 
 Vue.observer = observer;
 Vue.constructor = constructor;
+Vue.ref = ref;
 
 module.exports = Vue;

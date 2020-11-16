@@ -11,9 +11,10 @@
 ```javascript
 // Parent.js
 import React from 'react';
-import { constructor } from '@minar-kotonoha/vue-native-core';
+import { constructor, ref } from '@minar-kotonoha/vue-native-core';
 import Child from './Child';
 
+const childRef = ref();
 export default constructor({
   data() {
     return {
@@ -25,11 +26,17 @@ export default constructor({
       this.showChild = !this.showChild;
     },
   },
+  mounted() {
+    // 三种ref使用方式均可
+    ref1.add();
+    // ref1.current.add()
+    // ref1.current._store.add()
+  },
   render() {
     return (
       <div>
         <button onClick={this.trigger}>{this.showChild.toString()}</button>
-        {this.showChild && <SubVue count={1} />}
+        {this.showChild && <SubVue ref={childRef} count={1} />}
       </div>
     );
   },
