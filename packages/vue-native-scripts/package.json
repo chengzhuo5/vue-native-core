@@ -1,5 +1,5 @@
 {
-  "name": "vue-native-scripts",
+  "name": "@minar-kotonoha/vue-native-scripts",
   "version": "0.1.4",
   "description": "Compile Vue Native components to React Native",
   "main": "index.js",
