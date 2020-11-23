@@ -3861,7 +3861,7 @@ Object.defineProperty(Vue.prototype, '$isServer', {
   get: isServerRendering
 });
 
-Vue.version = '0.2.3';
+Vue.version = '0.2.4';
 
 // 
 
@@ -4089,7 +4089,7 @@ function constructor (options) {
     VueComponent.prototype.render = function render () {
       var this$1 = this;
 
-      this._store.props = props;
+      this._store.props = this.props;
       if (this._store._isMounted) {
         this._execLifeCycle('beforeUpdate');
         if (typeof options.updated === 'function') {

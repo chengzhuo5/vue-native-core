@@ -41,7 +41,7 @@ export default (options) => {
     }
 
     render() {
-      this._store.props = props;
+      this._store.props = this.props;
       if (this._store._isMounted) {
         this._execLifeCycle('beforeUpdate');
         if (typeof options.updated === 'function') {
