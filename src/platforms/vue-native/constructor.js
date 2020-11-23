@@ -1,5 +1,4 @@
 import { Component } from 'react';
-import Watcher from 'core/observer/watcher';
 import { nextTick } from 'core/util/index';
 import Vue from './runtime/index';
 import observer from './observer';
@@ -42,6 +41,7 @@ export default (options) => {
     }
 
     render() {
+      this._store.props = props;
       if (this._store._isMounted) {
         this._execLifeCycle('beforeUpdate');
         if (typeof options.updated === 'function') {
