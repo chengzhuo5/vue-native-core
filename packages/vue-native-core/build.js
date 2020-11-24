@@ -3861,7 +3861,7 @@ Object.defineProperty(Vue.prototype, '$isServer', {
   get: isServerRendering
 });
 
-Vue.version = '0.2.5';
+Vue.version = '0.2.6';
 
 // 
 
@@ -4053,16 +4053,8 @@ function constructor (options) {
   var VueComponent = /*@__PURE__*/(function (Component) {
     function VueComponent(props) {
       Component.call(this, props);
-      var data = {};
-      if (typeof options.data === 'function') {
-        data = options.data();
-      } else if (typeof options.data === 'object') {
-        data = Object.assign({}, data);
-      }
-      options.data = function () { return Object.assign({}, data, {
-        props: props
-      }); };
       this._store = new Vue(options);
+      this._store.props = this.props;
       this._store._rawComponent = this;
       this._execLifeCycle('beforeMount');
     }
@@ -4097,7 +4089,10 @@ function constructor (options) {
     VueComponent.prototype.render = function render () {
       var this$1 = this;
 
-      this._store.props = this.props;
+      if (this._store.props !== this.props) {
+        this._store.props = this.props;
+        this.forceUpdate();
+      }
       if (this._store._isMounted) {
         this._execLifeCycle('beforeUpdate');
         if (typeof options.updated === 'function') {
