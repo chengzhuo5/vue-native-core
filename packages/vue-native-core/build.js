@@ -3861,7 +3861,7 @@ Object.defineProperty(Vue.prototype, '$isServer', {
   get: isServerRendering
 });
 
-Vue.version = '0.2.4';
+Vue.version = '0.2.5';
 
 // 
 
@@ -4053,8 +4053,16 @@ function constructor (options) {
   var VueComponent = /*@__PURE__*/(function (Component) {
     function VueComponent(props) {
       Component.call(this, props);
+      var data = {};
+      if (typeof options.data === 'function') {
+        data = options.data();
+      } else if (typeof options.data === 'object') {
+        data = Object.assign({}, data);
+      }
+      options.data = function () { return Object.assign({}, data, {
+        props: props
+      }); };
       this._store = new Vue(options);
-      this._store.props = props;
       this._store._rawComponent = this;
       this._execLifeCycle('beforeMount');
     }
