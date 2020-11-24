@@ -3861,7 +3861,7 @@ Object.defineProperty(Vue.prototype, '$isServer', {
   get: isServerRendering
 });
 
-Vue.version = '0.2.6';
+Vue.version = '0.2.7';
 
 // 
 
@@ -4091,7 +4091,6 @@ function constructor (options) {
 
       if (this._store.props !== this.props) {
         this._store.props = this.props;
-        this.forceUpdate();
       }
       if (this._store._isMounted) {
         this._execLifeCycle('beforeUpdate');

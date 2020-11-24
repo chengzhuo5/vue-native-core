@@ -43,7 +43,6 @@ export default (options) => {
     render() {
       if (this._store.props !== this.props) {
         this._store.props = this.props;
-        this.forceUpdate()
       }
       if (this._store._isMounted) {
         this._execLifeCycle('beforeUpdate');
