@@ -4053,6 +4053,26 @@ function constructor (options) {
   var VueComponent = /*@__PURE__*/(function (Component) {
     function VueComponent(props) {
       Component.call(this, props);
+      if (options.data && typeof options.props === 'object') {
+        var rawData = typeof options.data === 'function' ? options.data() : options.data;
+        var newProps = {};
+        if (Array.isArray(options.props)) {
+          for (var i = 0; i < options.props.length; i++) {
+            var propsName = options.props[i];
+            newProps[propsName] = props[propsName];
+          }
+        } else {
+          for (var i$1 = 0; i$1 < Object.keys(options.props).length; i$1++) {
+            var propsName$1 = options.props[i$1];
+            newProps[propsName$1] = props[propsName$1];
+          }
+        }
+        var newData = (function () {
+          return Object.assign(newProps, rawData);
+        }).bind(options);
+        options.data = newData;
+        delete options.props;
+      }
       this._store = new Vue(options);
       this._store.props = this.props;
       this._store._rawComponent = this;

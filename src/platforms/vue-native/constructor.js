@@ -13,6 +13,26 @@ export default (options) => {
   class VueComponent extends Component {
     constructor(props) {
       super(props);
+      if (options.data && typeof options.props === 'object') {
+        const rawData = typeof options.data === 'function' ? options.data() : options.data;
+        const newProps = {};
+        if (Array.isArray(options.props)) {
+          for (let i = 0; i < options.props.length; i++) {
+            const propsName = options.props[i];
+            newProps[propsName] = props[propsName];
+          }
+        } else {
+          for (let i = 0; i < Object.keys(options.props).length; i++) {
+            const propsName = options.props[i];
+            newProps[propsName] = props[propsName];
+          }
+        }
+        const newData = (() => {
+          return Object.assign(newProps, rawData);
+        }).bind(options);
+        options.data = newData;
+        delete options.props
+      }
       this._store = new Vue(options);
       this._store.props = this.props;
       this._store._rawComponent = this;
