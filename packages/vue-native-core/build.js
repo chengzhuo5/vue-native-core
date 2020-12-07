@@ -3861,7 +3861,7 @@ Object.defineProperty(Vue.prototype, '$isServer', {
   get: isServerRendering
 });
 
-Vue.version = '0.2.7';
+Vue.version = '0.3.0';
 
 // 
 
@@ -4053,29 +4053,52 @@ function constructor (options) {
   var VueComponent = /*@__PURE__*/(function (Component) {
     function VueComponent(props) {
       Component.call(this, props);
-      if (options.data && typeof options.props === 'object') {
-        var rawData = typeof options.data === 'function' ? options.data() : options.data;
-        var newProps = {};
+      if (!options.data) {
+        options.data = {};
+      }
+      var rawData =
+        typeof options.data === 'function' ? options.data() : options.data;
+      var newProps = {};
+      var _reactivePropsKey = [];
+      if (typeof options.props === 'object') {
         if (Array.isArray(options.props)) {
           for (var i = 0; i < options.props.length; i++) {
             var propsName = options.props[i];
             newProps[propsName] = props[propsName];
           }
         } else {
-          for (var i$1 = 0; i$1 < Object.keys(options.props).length; i$1++) {
-            var propsName$1 = options.props[i$1];
+          var propKeys$1 = Object.keys(options.props);
+          for (var i$1 = 0; i$1 < propKeys$1.length; i$1++) {
+            var propsName$1 = propKeys$1[i$1];
             newProps[propsName$1] = props[propsName$1];
           }
         }
-        var newData = (function () {
-          return Object.assign(newProps, rawData);
-        }).bind(options);
-        options.data = newData;
+        _reactivePropsKey = Object.keys(newProps);
         delete options.props;
       }
+      var newData = (function () {
+        return Object.assign(
+          newProps,
+          {
+            props: {},
+          },
+          rawData
+        );
+      }).bind(options);
+      options.data = newData;
       this._store = new Vue(options);
-      this._store.props = this.props;
+      var propKeys = Object.keys(props);
+      for (var i$2 = 0; i$2 < propKeys.length; i$2++) {
+        var key = propKeys[i$2];
+        if (_reactivePropsKey.includes(key)) {
+          this._store.$set(this._store.props, key, props[key]);
+        } else {
+          this._store.props[key] = props[key];
+        }
+      }
+      this._store._propsKey = _reactivePropsKey;
       this._store._rawComponent = this;
+      this._store._rawProps = props;
       this._execLifeCycle('beforeMount');
     }
 
@@ -4109,8 +4132,16 @@ function constructor (options) {
     VueComponent.prototype.render = function render () {
       var this$1 = this;
 
-      if (this._store.props !== this.props) {
-        this._store.props = this.props;
+      if (this._store._rawProps !== this.props) {
+        this._store._rawProps = this.props;
+        var propKeys = Object.keys(this.props);
+        for (var i = 0; i < propKeys.length; i++) {
+          var key = propKeys[i];
+          if (this._store._propsKey.includes(key)) {
+            this._store[key] = this.props[key];
+          }
+          this._store.props[key] = this.props[key];
+        }
       }
       if (this._store._isMounted) {
         this._execLifeCycle('beforeUpdate');

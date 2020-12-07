@@ -13,29 +13,52 @@ export default (options) => {
   class VueComponent extends Component {
     constructor(props) {
       super(props);
-      if (options.data && typeof options.props === 'object') {
-        const rawData = typeof options.data === 'function' ? options.data() : options.data;
-        const newProps = {};
+      if (!options.data) {
+        options.data = {};
+      }
+      const rawData =
+        typeof options.data === 'function' ? options.data() : options.data;
+      const newProps = {};
+      let _reactivePropsKey = [];
+      if (typeof options.props === 'object') {
         if (Array.isArray(options.props)) {
           for (let i = 0; i < options.props.length; i++) {
             const propsName = options.props[i];
             newProps[propsName] = props[propsName];
           }
         } else {
-          for (let i = 0; i < Object.keys(options.props).length; i++) {
-            const propsName = options.props[i];
+          const propKeys = Object.keys(options.props);
+          for (let i = 0; i < propKeys.length; i++) {
+            const propsName = propKeys[i];
             newProps[propsName] = props[propsName];
           }
         }
-        const newData = (() => {
-          return Object.assign(newProps, rawData);
-        }).bind(options);
-        options.data = newData;
-        delete options.props
+        _reactivePropsKey = Object.keys(newProps);
+        delete options.props;
       }
+      const newData = (() => {
+        return Object.assign(
+          newProps,
+          {
+            props: {},
+          },
+          rawData
+        );
+      }).bind(options);
+      options.data = newData;
       this._store = new Vue(options);
-      this._store.props = this.props;
+      const propKeys = Object.keys(props);
+      for (let i = 0; i < propKeys.length; i++) {
+        const key = propKeys[i];
+        if (_reactivePropsKey.includes(key)) {
+          this._store.$set(this._store.props, key, props[key]);
+        } else {
+          this._store.props[key] = props[key];
+        }
+      }
+      this._store._propsKey = _reactivePropsKey;
       this._store._rawComponent = this;
+      this._store._rawProps = props;
       this._execLifeCycle('beforeMount');
     }
 
@@ -61,8 +84,16 @@ export default (options) => {
     }
 
     render() {
-      if (this._store.props !== this.props) {
-        this._store.props = this.props;
+      if (this._store._rawProps !== this.props) {
+        this._store._rawProps = this.props;
+        const propKeys = Object.keys(this.props);
+        for (let i = 0; i < propKeys.length; i++) {
+          const key = propKeys[i];
+          if (this._store._propsKey.includes(key)) {
+            this._store[key] = this.props[key];
+          }
+          this._store.props[key] = this.props[key];
+        }
       }
       if (this._store._isMounted) {
         this._execLifeCycle('beforeUpdate');

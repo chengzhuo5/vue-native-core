@@ -51,6 +51,7 @@ import React from 'react';
 import { constructor } from '@minar-kotonoha/vue-native-core';
 
 export default constructor({
+  props: ['count'], // 此处可以注册属性，注册过的属性可以在this中直接访问，也可以用于computed和watch
   data() {
     return {
       a: 0,
@@ -72,6 +73,7 @@ export default constructor({
   },
   mounted() {
     this.a = this.props.count; // this.props可以拿到所有的属性
+    this.a = this.count; // this中可以拿到注册过的属性
     console.log('mounted');
   },
   beforeDestroy() {

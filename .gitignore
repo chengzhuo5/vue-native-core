@@ -11,3 +11,4 @@ test/e2e/screenshots
 coverage
 dev
 compile
+.dccache
