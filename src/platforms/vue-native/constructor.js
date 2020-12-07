@@ -13,28 +13,33 @@ export default (options) => {
   class VueComponent extends Component {
     constructor(props) {
       super(props);
-      if (!options.data) {
-        options.data = {};
-      }
+      const newOptions = Object.assign(
+        {
+          data: {},
+        },
+        options
+      );
       const rawData =
-        typeof options.data === 'function' ? options.data() : options.data;
+        typeof newOptions.data === 'function'
+          ? newOptions.data()
+          : newOptions.data;
       const newProps = {};
       let _reactivePropsKey = [];
-      if (typeof options.props === 'object') {
-        if (Array.isArray(options.props)) {
-          for (let i = 0; i < options.props.length; i++) {
-            const propsName = options.props[i];
+      if (typeof newOptions.props === 'object') {
+        if (Array.isArray(newOptions.props)) {
+          for (let i = 0; i < newOptions.props.length; i++) {
+            const propsName = newOptions.props[i];
             newProps[propsName] = props[propsName];
           }
         } else {
-          const propKeys = Object.keys(options.props);
+          const propKeys = Object.keys(newOptions.props);
           for (let i = 0; i < propKeys.length; i++) {
             const propsName = propKeys[i];
             newProps[propsName] = props[propsName];
           }
         }
         _reactivePropsKey = Object.keys(newProps);
-        delete options.props;
+        delete newOptions.props;
       }
       const newData = (() => {
         return Object.assign(
@@ -44,9 +49,9 @@ export default (options) => {
           },
           rawData
         );
-      }).bind(options);
-      options.data = newData;
-      this._store = new Vue(options);
+      }).bind(newOptions);
+      newOptions.data = newData;
+      this._store = new Vue(newOptions);
       const propKeys = Object.keys(props);
       for (let i = 0; i < propKeys.length; i++) {
         const key = propKeys[i];
@@ -91,8 +96,10 @@ export default (options) => {
           const key = propKeys[i];
           if (this._store._propsKey.includes(key)) {
             this._store[key] = this.props[key];
+            this._store.$set(this._store.props, key, this.props[key]);
+          } else {
+            this._store.props[key] = this.props[key];
           }
-          this._store.props[key] = this.props[key];
         }
       }
       if (this._store._isMounted) {

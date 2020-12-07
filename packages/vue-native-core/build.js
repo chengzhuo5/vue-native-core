@@ -3861,7 +3861,7 @@ Object.defineProperty(Vue.prototype, '$isServer', {
   get: isServerRendering
 });
 
-Vue.version = '0.3.0';
+Vue.version = '0.3.1';
 
 // 
 
@@ -4053,28 +4053,33 @@ function constructor (options) {
   var VueComponent = /*@__PURE__*/(function (Component) {
     function VueComponent(props) {
       Component.call(this, props);
-      if (!options.data) {
-        options.data = {};
-      }
+      var newOptions = Object.assign(
+        {
+          data: {},
+        },
+        options
+      );
       var rawData =
-        typeof options.data === 'function' ? options.data() : options.data;
+        typeof newOptions.data === 'function'
+          ? newOptions.data()
+          : newOptions.data;
       var newProps = {};
       var _reactivePropsKey = [];
-      if (typeof options.props === 'object') {
-        if (Array.isArray(options.props)) {
-          for (var i = 0; i < options.props.length; i++) {
-            var propsName = options.props[i];
+      if (typeof newOptions.props === 'object') {
+        if (Array.isArray(newOptions.props)) {
+          for (var i = 0; i < newOptions.props.length; i++) {
+            var propsName = newOptions.props[i];
             newProps[propsName] = props[propsName];
           }
         } else {
-          var propKeys$1 = Object.keys(options.props);
+          var propKeys$1 = Object.keys(newOptions.props);
           for (var i$1 = 0; i$1 < propKeys$1.length; i$1++) {
             var propsName$1 = propKeys$1[i$1];
             newProps[propsName$1] = props[propsName$1];
           }
         }
         _reactivePropsKey = Object.keys(newProps);
-        delete options.props;
+        delete newOptions.props;
       }
       var newData = (function () {
         return Object.assign(
@@ -4084,9 +4089,9 @@ function constructor (options) {
           },
           rawData
         );
-      }).bind(options);
-      options.data = newData;
-      this._store = new Vue(options);
+      }).bind(newOptions);
+      newOptions.data = newData;
+      this._store = new Vue(newOptions);
       var propKeys = Object.keys(props);
       for (var i$2 = 0; i$2 < propKeys.length; i$2++) {
         var key = propKeys[i$2];
@@ -4139,8 +4144,10 @@ function constructor (options) {
           var key = propKeys[i];
           if (this._store._propsKey.includes(key)) {
             this._store[key] = this.props[key];
+            this._store.$set(this._store.props, key, this.props[key]);
+          } else {
+            this._store.props[key] = this.props[key];
           }
-          this._store.props[key] = this.props[key];
         }
       }
       if (this._store._isMounted) {
