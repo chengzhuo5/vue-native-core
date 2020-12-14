@@ -451,19 +451,19 @@ function handleError (err, vm, info) {
 /*  */
 
 // can we use __proto__?
-var hasProto = "__proto__" in {};
+var hasProto = '__proto__' in {};
 
 // Browser environment sniffing
-var inBrowser = typeof window !== "undefined";
+var inBrowser = typeof window !== 'undefined';
 var UA =
   inBrowser &&
   window.navigator &&
   window.navigator.userAgent &&
   window.navigator.userAgent.toLowerCase();
 var isIE = UA && /msie|trident/.test(UA);
-var isIE9 = UA && UA.indexOf("msie 9.0") > 0;
-var isEdge = UA && UA.indexOf("edge/") > 0;
-var isAndroid = UA && UA.indexOf("android") > 0;
+var isIE9 = UA && UA.indexOf('msie 9.0') > 0;
+var isEdge = UA && UA.indexOf('edge/') > 0;
+var isAndroid = UA && UA.indexOf('android') > 0;
 var isIOS = UA && /iphone|ipad|ipod|ios/.test(UA);
 var isChrome = UA && /chrome\/\d+/.test(UA) && !isEdge;
 
@@ -473,15 +473,15 @@ if (inBrowser) {
     var opts = {};
     Object.defineProperty(
       opts,
-      "passive",
+      'passive',
       ({
         get: function get() {
           /* istanbul ignore next */
           supportsPassive = true;
-        }
+        },
       })
     ); // https://github.com/facebook/flow/issues/285
-    window.addEventListener("test-passive", null, opts);
+    window.addEventListener('test-passive', null, opts);
   } catch (e) {}
 }
 
@@ -491,10 +491,10 @@ var _isServer;
 var isServerRendering = function () {
   if (_isServer === undefined) {
     /* istanbul ignore if */
-    if (!inBrowser && typeof global !== "undefined") {
+    if (!inBrowser && typeof global !== 'undefined') {
       // detect presence of vue-server-renderer and avoid
       // Webpack shimming the process
-      _isServer = global["process"].env.VUE_ENV === "server";
+      _isServer = global['process'].env.VUE_ENV === 'server';
     } else {
       _isServer = false;
     }
@@ -507,19 +507,19 @@ var devtools = inBrowser && window.__VUE_DEVTOOLS_GLOBAL_HOOK__;
 
 /* istanbul ignore next */
 function isNative(Ctor) {
-  return typeof Ctor === "function" && /native code/.test(Ctor.toString());
+  return typeof Ctor === 'function' && /native code/.test(Ctor.toString());
 }
 
 var hasSymbol =
-  typeof Symbol !== "undefined" &&
+  typeof Symbol !== 'undefined' &&
   isNative(Symbol) &&
-  typeof Reflect !== "undefined" &&
+  typeof Reflect !== 'undefined' &&
   isNative(Reflect.ownKeys);
 
 /**
  * Defer a task to execute it asynchronously.
  */
-var nextTick = (function() {
+var nextTick = (function () {
   var callbacks = [];
   var pending = false;
   var timerFunc;
@@ -540,7 +540,7 @@ var nextTick = (function() {
   // completely stops working after triggering a few times... so, if native
   // Promise is available, we will use it:
   /* istanbul ignore if */
-  if (typeof Promise !== "undefined" && isNative(Promise)) {
+  if (typeof Promise !== 'undefined' && isNative(Promise)) {
     var p = Promise.resolve();
     var logError = function (err) {
       console.error(err);
@@ -555,10 +555,10 @@ var nextTick = (function() {
       if (isIOS) { setTimeout(noop); }
     };
   } else if (
-    typeof MutationObserver !== "undefined" &&
+    typeof MutationObserver !== 'undefined' &&
     (isNative(MutationObserver) ||
       // PhantomJS and iOS 7.x
-      MutationObserver.toString() === "[object MutationObserverConstructor]")
+      MutationObserver.toString() === '[object MutationObserverConstructor]')
   ) {
     // use MutationObserver where native Promise is not available,
     // e.g. PhantomJS IE11, iOS7, Android 4.4
@@ -566,26 +566,29 @@ var nextTick = (function() {
     var observer = new MutationObserver(nextTickHandler);
     var textNode = document.createTextNode(String(counter));
     observer.observe(textNode, {
-      characterData: true
+      characterData: true,
     });
     timerFunc = function () {
       counter = (counter + 1) % 2;
       textNode.data = String(counter);
     };
   } else {
-    if (Promise !== undefined) {
-      // If Promise is supported for android
-      timerFunc = function() {
-        var p = Promise.resolve();
-        p.then(nextTickHandler).catch(logError);
-      };
-    } else {
-      // fallback to setTimeout
-      /* istanbul ignore next */
-      timerFunc = function() {
-        setTimeout(nextTickHandler, 0);
-      };
-    }
+    timerFunc = function () {
+      setTimeout(nextTickHandler, 0);
+    };
+    // if (Promise !== undefined) {
+    //   // If Promise is supported for android
+    //   timerFunc = function () {
+    //     var p = Promise.resolve();
+    //     p.then(nextTickHandler).catch(logError);
+    //   };
+    // } else {
+    //   // fallback to setTimeout
+    //   /* istanbul ignore next */
+    //   timerFunc = function () {
+    //     setTimeout(nextTickHandler, 0);
+    //   };
+    // }
   }
 
   return function queueNextTick(cb, ctx) {
@@ -595,7 +598,7 @@ var nextTick = (function() {
         try {
           cb.call(ctx);
         } catch (e) {
-          handleError(e, ctx, "nextTick");
+          handleError(e, ctx, 'nextTick');
         }
       } else if (_resolve) {
         _resolve(ctx);
@@ -605,7 +608,7 @@ var nextTick = (function() {
       pending = true;
       timerFunc();
     }
-    if (!cb && typeof Promise !== "undefined") {
+    if (!cb && typeof Promise !== 'undefined') {
       return new Promise(function (resolve, reject) {
         _resolve = resolve;
       });
@@ -615,7 +618,7 @@ var nextTick = (function() {
 
 var _Set;
 /* istanbul ignore if */
-if (typeof Set !== "undefined" && isNative(Set)) {
+if (typeof Set !== 'undefined' && isNative(Set)) {
   // use native Set when available.
   _Set = Set;
 } else {
@@ -3861,7 +3864,7 @@ Object.defineProperty(Vue.prototype, '$isServer', {
   get: isServerRendering
 });
 
-Vue.version = '0.3.1';
+Vue.version = '0.3.2';
 
 // 
 
@@ -4177,17 +4180,25 @@ function ref () {
       if (key === 'current' && target.current) {
         var currentProxy = new Proxy(target.current, {
           get: function get(current, currentKey) {
-            return current[currentKey] || current._store[currentKey]
+            var res = current[currentKey];
+            if (!res && current._store) {
+              res = current._store[currentKey];
+            }
+            return res;
           },
         });
-        return currentProxy
+        return currentProxy;
       }
       if (!target[key] && target.current) {
-        return target.current[key] || target.current._store[key]
+        var res = target.current[key];
+        if (!res && target.current._store) {
+          res = target.current._store[key];
+        }
+        return res;
       }
-      return target[key]
+      return target[key];
     },
-  })
+  });
 }
 
 /**  */
